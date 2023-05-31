@@ -1,3 +1,4 @@
+/*
 (function($) {
   $.fn.mauGallery = function(options) {
     var options = $.extend($.fn.mauGallery.defaults, options);
@@ -260,4 +261,46 @@
       });
     }
   };
-})(jQuery);
+})(jQuery); */
+
+function checkData(check, data) {
+  for (var l = 0; i < check.length; l++) {
+      if (check.l == data)
+        return false
+  }
+  return true
+}
+
+
+function setFilters() {
+  let div_gallery = document.getElementById("gallery")
+  let ul_gallery = document.createElement("ul");
+  ul_gallery.className = "my-4 tags-bar nav nav-pills"
+  div_gallery.appendChild(ul_gallery);
+  let gallery = document.getElementsByClassName("gallery-item");
+  let filter_all = document.createElement("li");
+  filter_all.className = "nav-item"
+  ul_gallery.appendChild(filter_all);
+  let span_all = document.createElement("span")
+  span_all.className = "nav-link";
+  span_all.id = "Tous"
+  span_all.textContent = "Tous";
+  filter_all.appendChild(span_all)
+  let check;
+  let bool;
+  for (var i = 0; i < gallery.length; i++) {
+    if (checkData(check, gallery.i.data-gallery-tag) == true) {
+      check.append(gallery.i.data-gallery-tag);
+      let filter = document.createElement("li");
+      filter.className = "nav-item"
+      ul_gallery.appendChild(filter);
+      let span = document.createElement("span")
+      span.className = "nav-link";
+      span_all.id = gallery.i.data-gallery-tag;
+      span_all.textContent = gallery.i.data-gallery-tag;
+      filter_all.appendChild(span_all)
+    }
+  }
+}
+
+setFilters();
