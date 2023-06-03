@@ -264,41 +264,127 @@
 })(jQuery); */
 
 function checkData(check, data) {
-  for (var l = 0; i < check.length; l++) {
-      if (check.l == data)
+  for (var l = 0; l < check.length; l++) {
+    if (check[l] == data) {
         return false
+      }
   }
   return true
 }
 
+function filterSelection(param) {
+  let item = document.getElementsByClassName("item-column mb-4 col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4");
+  let item_img;
+  if (param == 'all') {
+    for (var i = 0; i < item.length; i++)
+      item[i].style = "";
+  } else {
+    for (var i = 0; i < item.length; i++) {
+      item_img = item[i].querySelector(".gallery-item");
+      if (item_img.getAttribute("data-gallery-tag") != param)
+        item[i].style.display = "none";
+      if (item_img.getAttribute("data-gallery-tag") == param & item[i].style.display == "none")
+        item[i].style = "";
+    }
+  }
+}
+
+function addEventFilter(span) {
+  span.addEventListener("click", function() {
+    var current = document.getElementsByClassName("nav-link active active-tag");
+    current[0].className = current[0].className.replace("nav-link active active-tag", "nav-link");
+    this.className += " active active-tag";
+    filterSelection(this.getAttribute("data-images-toggle"));
+  });
+}
+
+function addEventItem(gallery, img) {
+  let modal = document.querySelector(".modal")
+  let modal_img = gallery.querySelector(".lightboxImage")
+  img.addEventListener("click", function() {
+    modal_img.src = img.src;
+    modal.removeAttribute("aria-hidden");
+    modal.className += " show";
+    modal.setAttribute("aria-modal", "true");
+    modal.style.display = "block";
+    modal.setAttribute("role", "dialog");
+  });
+}
 
 function setFilters() {
-  let div_gallery = document.getElementById("gallery")
+  let div_gallery = document.querySelector(".gallery")
+  div_gallery.style = "";
   let ul_gallery = document.createElement("ul");
   ul_gallery.className = "my-4 tags-bar nav nav-pills"
-  div_gallery.appendChild(ul_gallery);
   let gallery = document.getElementsByClassName("gallery-item");
   let filter_all = document.createElement("li");
   filter_all.className = "nav-item"
+  div_gallery.appendChild(ul_gallery);
+  let lightbox = document.createElement("div");
+  lightbox.id = "myAwesomeLightbox";
+  lightbox.className = "modal fade";
+  lightbox.setAttribute("tabindex", -1);
+  lightbox.style.display = "none";
+  lightbox.setAttribute("aria-hidden", "true");
+  div_gallery.appendChild(lightbox);
+  let modal_dial = document.createElement("div");
+  modal_dial.className = "modal-dialog";
+  modal_dial.setAttribute("role", "document");
+  lightbox.appendChild(modal_dial);
+  let modal_content = document.createElement("div");
+  modal_content.className = "modal-content";
+  modal_dial.appendChild(modal_content);
+  let modal_body = document.createElement("div");
+  modal_body.className = "modal-body";
+  modal_content.appendChild(modal_body);
+  let modal_arrow = document.createElement("div");
+  modal_arrow.className = "mg-prev";
+  modal_arrow.style = "cursor:pointer;position:absolute;top:50%;left:-15px;background:white;";
+  modal_arrow.textContent = "<";
+  modal_body.appendChild(modal_arrow);
+  let modal_arrow_bis = document.createElement("div");
+  modal_arrow_bis.className = "mg-next";
+  modal_arrow_bis.style = "cursor:pointer;position:absolute;top:50%;right:-15px;background:white;}";
+  modal_arrow_bis.textContent = ">";
+  modal_body.appendChild(modal_arrow_bis);
+  let modal_img = document.createElement("img");
+  modal_img.className = "lightboxImage img-fluid";
+  modal_img.setAttribute("alt", "Contenu de l'image affichée dans la modale au clique")
+  modal_body.appendChild(modal_img);
   ul_gallery.appendChild(filter_all);
+  let div_gallery_bis = document.createElement("div");
+  div_gallery_bis.className = "gallery-items-row row"
+  div_gallery.appendChild(div_gallery_bis);
+  let item = document.getElementsByClassName("gallery-item");
+  for (var i = 0; i < item.length; i++) {
+    let item_gallery = document.createElement("div");
+    item_gallery.className = "item-column mb-4 col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4"
+    div_gallery_bis.appendChild(item_gallery);
+    item[0].className = "gallery-item img-fluid";
+    addEventItem(modal_body, item[0]);
+    item_gallery.appendChild(item[0]);
+  }
   let span_all = document.createElement("span")
-  span_all.className = "nav-link";
-  span_all.id = "Tous"
+  span_all.className = "nav-link active active-tag";
+  span_all.setAttribute("data-images-toggle", "all");
   span_all.textContent = "Tous";
+  addEventFilter(span_all);
   filter_all.appendChild(span_all)
-  let check;
-  let bool;
+  let check = ["Tous"];
+  let tag;
   for (var i = 0; i < gallery.length; i++) {
-    if (checkData(check, gallery.i.data-gallery-tag) == true) {
-      check.append(gallery.i.data-gallery-tag);
+    tag = gallery[i].getAttribute("data-gallery-tag");
+    if (checkData(check, tag) == true) {
+      check.push(tag);
       let filter = document.createElement("li");
-      filter.className = "nav-item"
+      filter.className = "nav-item active"
       ul_gallery.appendChild(filter);
       let span = document.createElement("span")
       span.className = "nav-link";
-      span_all.id = gallery.i.data-gallery-tag;
-      span_all.textContent = gallery.i.data-gallery-tag;
-      filter_all.appendChild(span_all)
+      span.setAttribute("data-images-toggle", tag);
+      span.textContent = tag;
+      addEventFilter(span);
+      filter.appendChild(span)
     }
   }
 }
