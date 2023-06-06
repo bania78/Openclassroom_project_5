@@ -308,10 +308,12 @@ function addEventItem(gallery, img) {
     modal.setAttribute("aria-modal", "true");
     modal.style.display = "block";
     modal.setAttribute("role", "dialog");
+    modal.setAttribute("tabindex", img.getAttribute("index"))
   });
 }
 
 function setFilters() {
+  let arrow = 0;
   let div_gallery = document.querySelector(".gallery")
   div_gallery.style = "";
   let ul_gallery = document.createElement("ul");
@@ -361,9 +363,44 @@ function setFilters() {
     item_gallery.className = "item-column mb-4 col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4"
     div_gallery_bis.appendChild(item_gallery);
     item[0].className = "gallery-item img-fluid";
+    item[0].setAttribute("index", i);
     addEventItem(modal_body, item[0]);
     item_gallery.appendChild(item[0]);
   }
+  let item_gallery = document.getElementsByClassName("item-column mb-4 col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4");
+  modal_arrow.addEventListener("click", function() {
+    for (let i = (lightbox.getAttribute("tabindex") - 1); i >= 0; i--) {
+      if (item_gallery[i].style.display != "none") {
+        modal_img.src = item[i].src;
+        lightbox.setAttribute("tabindex", item[i].getAttribute("index"))
+        arrow = 1;
+        return;
+      }
+    }
+    arrow = 1;
+  })
+  modal_arrow_bis.addEventListener("click", function() {
+    for (let i = lightbox.getAttribute("tabindex"); i < item_gallery.length; i++) {
+      if (item_gallery[i].style.display != "none" & i != lightbox.getAttribute("tabindex")) {
+        modal_img.src = item[i].src;
+        lightbox.setAttribute("tabindex", item[i].getAttribute("index"))
+        arrow = 1;
+        return;
+      }
+    }
+    arrow = 1;
+  })
+  lightbox.addEventListener("click", function () {
+    if (arrow == 1) {
+      arrow = 0;
+      return;
+    }
+    lightbox.setAttribute("aria-hidden", "true");
+    lightbox.className = "modal fade";
+    lightbox.removeAttribute("aria-modal");
+    lightbox.style.display = "none";
+    lightbox.removeAttribute("role");
+  })
   let span_all = document.createElement("span")
   span_all.className = "nav-link active active-tag";
   span_all.setAttribute("data-images-toggle", "all");
